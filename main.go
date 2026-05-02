@@ -1,14 +1,19 @@
 package main
 
 import (
-	"blog-server/routers"
-	"blog-server/utils"
+	"blog-2026-server/routers"
+	"blog-2026-server/utils"
 	"fmt"
 	"log"
 
 	"github.com/joho/godotenv"
 )
 
+// @title           我的博客 API
+// @version         0.1
+// @description     基于 Go + GORM 的博客系统后端
+// @host            localhost:8080
+// @BasePath        /api
 func main() {
 	// 加载环境变量
 	err := godotenv.Load()
@@ -22,6 +27,9 @@ func main() {
 
 	// 注册路由
 	r := routers.InitRouter()
+
+	// 注册openApi
+	utils.RegisterOpenapi(r)
 
 	// 在启动前打印
 	fmt.Println("🚀 系统启动成功：http://localhost:8080")

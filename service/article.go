@@ -1,8 +1,8 @@
 package service
 
 import (
-	"blog-server/model"
-	"blog-server/utils"
+	"blog-2026-server/model"
+	"blog-2026-server/utils"
 )
 
 type ArticleService struct{}

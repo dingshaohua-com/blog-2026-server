@@ -6,6 +6,7 @@ import (
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
+	"gorm.io/gorm/schema"
 )
 
 // DB 定义一个全局变量，以便其他地方调用
@@ -17,7 +18,11 @@ func InitDB() {
 	println(databaseUrl)
 
 	// 注意：这里使用 = 而不是 :=，因为 DB 已经在外部声明了
-	DB, err = gorm.Open(postgres.Open(databaseUrl), &gorm.Config{})
+	DB, err = gorm.Open(postgres.Open(databaseUrl), &gorm.Config{
+		NamingStrategy: schema.NamingStrategy{
+			SingularTable: true, // 强制使用单数表名
+		},
+	})
 	if err != nil {
 		panic("无法连接数据库: " + err.Error())
 	}
