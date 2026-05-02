@@ -226,7 +226,7 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "content": {
-                    "description": "使用 JSONType 绑定上面的结构体",
+                    "description": "使用泛型 JSONType 绑定，实现自动序列化/反序列化",
                     "allOf": [
                         {
                             "$ref": "#/definitions/datatypes.JSONType-model_AppContent"
@@ -237,7 +237,8 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "version": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "0.1"
                 }
             }
         },

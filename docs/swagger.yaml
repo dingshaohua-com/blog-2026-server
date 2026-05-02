@@ -6,10 +6,11 @@ definitions:
       content:
         allOf:
         - $ref: '#/definitions/datatypes.JSONType-model_AppContent'
-        description: 使用 JSONType 绑定上面的结构体
+        description: 使用泛型 JSONType 绑定，实现自动序列化/反序列化
       id:
         type: integer
       version:
+        example: "0.1"
         type: string
     type: object
   model.Article:
