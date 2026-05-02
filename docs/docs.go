@@ -20,7 +20,7 @@ const docTemplate = `{
             "get": {
                 "description": "获取当前后端应用的版本、环境、运行状态等基础信息",
                 "tags": [
-                    "基础模块"
+                    "Base"
                 ],
                 "summary": "获取系统信息",
                 "responses": {
@@ -48,7 +48,7 @@ const docTemplate = `{
         "/article": {
             "get": {
                 "tags": [
-                    "文章模块"
+                    "Article"
                 ],
                 "summary": "获取文章列表",
                 "responses": {
@@ -69,7 +69,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "文章模块"
+                    "Article"
                 ],
                 "summary": "更新文章",
                 "parameters": [
@@ -107,7 +107,7 @@ const docTemplate = `{
             "post": {
                 "description": "提交文章标题、内容等信息创建新篇章",
                 "tags": [
-                    "文章模块"
+                    "Article"
                 ],
                 "summary": "新增文章",
                 "parameters": [
@@ -145,7 +145,7 @@ const docTemplate = `{
             "delete": {
                 "description": "根据文章 ID 永久删除文章",
                 "tags": [
-                    "文章模块"
+                    "Article"
                 ],
                 "summary": "删除文章",
                 "parameters": [
@@ -183,7 +183,7 @@ const docTemplate = `{
             "get": {
                 "description": "根据文章 ID 查询文章的详细内容及分类信息",
                 "tags": [
-                    "文章模块"
+                    "Article"
                 ],
                 "summary": "获取文章详情",
                 "parameters": [
@@ -314,12 +314,12 @@ const docTemplate = `{
 
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
-	Version:          "0.1",
-	Host:             "localhost:8080",
-	BasePath:         "/api",
+	Version:          "",
+	Host:             "",
+	BasePath:         "",
 	Schemes:          []string{},
-	Title:            "我的博客 API",
-	Description:      "基于 Go + GORM 的博客系统后端",
+	Title:            "",
+	Description:      "",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
 	LeftDelim:        "{{",

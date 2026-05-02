@@ -12,7 +12,7 @@ var rootService = &service.RootService{}
 // AppInfo 获取应用基础信息
 // @Summary      获取系统信息
 // @Description  获取当前后端应用的版本、环境、运行状态等基础信息
-// @Tags         基础模块
+// @Tags Base
 // @Success      200  {object}  utils.JsonResult{data=model.AppInfo} "返回应用配置信息"
 // @Router       /app-info [get]
 func AppInfo(c *gin.Context) {

@@ -29,7 +29,7 @@ func handleArticleRequest(c *gin.Context, action func(*model.Article) error) {
 
 // GetArticleList 获取文章列表
 // @Summary      获取文章列表
-// @Tags         文章模块
+// @Tags         Article
 // @Success      200  {object}  utils.JsonResult
 // @Router       /article [get]
 func GetArticleList(c *gin.Context) {
@@ -44,7 +44,7 @@ func GetArticleList(c *gin.Context) {
 // GetArticle 获取单篇文章详情
 // @Summary      获取文章详情
 // @Description  根据文章 ID 查询文章的详细内容及分类信息
-// @Tags         文章模块
+// @Tags         Article
 // @Param        id   path      int  true  "文章ID"
 // @Success      200  {object}  utils.JsonResult{data=model.ArticleVO}
 // @Router       /article/{id} [get]
@@ -62,7 +62,7 @@ func GetArticle(c *gin.Context) {
 // InsertArticle 创建新文章
 // @Summary      新增文章
 // @Description  提交文章标题、内容等信息创建新篇章
-// @Tags         文章模块
+// @Tags         Article
 // @Param        article  body      model.Article  true  "文章内容对象"
 // @Success      200      {object}  utils.JsonResult{data=model.ArticleVO} "返回创建成功的文章详情"
 // @Router       /article [post]
@@ -73,7 +73,7 @@ func InsertArticle(c *gin.Context) {
 // UpdateArticle 更新文章
 // @Summary      更新文章
 // @Description  根据文章对象中的 ID 更新标题、内容、分类等信息
-// @Tags         文章模块
+// @Tags         Article
 // @Accept       json
 // @Produce      json
 // @Param        article  body      model.Article  true  "需要更新的文章对象"
@@ -86,7 +86,7 @@ func UpdateArticle(c *gin.Context) {
 // DeleteArticle 删除文章
 // @Summary      删除文章
 // @Description  根据文章 ID 永久删除文章
-// @Tags         文章模块
+// @Tags         Article
 // @Param        id   query     int  true  "文章 ID"
 // @Success      200  {object}  utils.JsonResult{data=int} "返回被删除的文章 ID"
 // @Router       /article [delete]

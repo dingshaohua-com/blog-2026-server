@@ -9,11 +9,6 @@ import (
 	"github.com/joho/godotenv"
 )
 
-// @title           我的博客 API
-// @version         0.1
-// @description     基于 Go + GORM 的博客系统后端
-// @host            localhost:8080
-// @BasePath        /api
 func main() {
 	// 加载环境变量
 	err := godotenv.Load()
