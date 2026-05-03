@@ -49,6 +49,55 @@ definitions:
         description: 扩展字段
         type: string
     type: object
+  model.Mood:
+    properties:
+      content:
+        type: string
+      createTime:
+        type: string
+      id:
+        type: integer
+    type: object
+  model.PageResult-model_ArticleVO:
+    properties:
+      current:
+        description: 当前页码
+        type: integer
+      hasMore:
+        description: 是否有更多
+        type: boolean
+      list:
+        description: 数据列表
+        items:
+          $ref: '#/definitions/model.ArticleVO'
+        type: array
+      size:
+        description: 每页条数
+        type: integer
+      total:
+        description: 总条数
+        type: integer
+    type: object
+  model.PageResult-model_Mood:
+    properties:
+      current:
+        description: 当前页码
+        type: integer
+      hasMore:
+        description: 是否有更多
+        type: boolean
+      list:
+        description: 数据列表
+        items:
+          $ref: '#/definitions/model.Mood'
+        type: array
+      size:
+        description: 每页条数
+        type: integer
+      total:
+        description: 总条数
+        type: integer
+    type: object
   utils.JsonResult:
     properties:
       code:
@@ -106,11 +155,26 @@ paths:
       tags:
       - Article
     get:
+      description: 分页获取文章列表，包含分类名称和是否有更多
+      parameters:
+      - description: 当前页码 (默认1)
+        in: query
+        name: current
+        type: integer
+      - description: 每页条数 (默认10)
+        in: query
+        name: size
+        type: integer
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/utils.JsonResult'
+            allOf:
+            - $ref: '#/definitions/utils.JsonResult'
+            - properties:
+                data:
+                  $ref: '#/definitions/model.PageResult-model_ArticleVO'
+              type: object
       summary: 获取文章列表
       tags:
       - Article
@@ -184,9 +248,75 @@ paths:
       summary: 获取文章详情
       tags:
       - Article
+  /mood:
+    get:
+      parameters:
+      - description: 当前页
+        in: query
+        name: current
+        type: integer
+      - description: 每页条数
+        in: query
+        name: size
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/utils.JsonResult'
+            - properties:
+                data:
+                  $ref: '#/definitions/model.PageResult-model_Mood'
+              type: object
+      summary: 获取心情列表
+      tags:
+      - Mood
+    post:
+      parameters:
+      - description: 心情内容
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/model.Mood'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/utils.JsonResult'
+      summary: 添加心情
+      tags:
+      - Mood
+    put:
+      parameters:
+      - description: 心情对象
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/model.Mood'
+      responses: {}
+      summary: 修改心情
+      tags:
+      - Mood
+  /mood/{id}:
+    delete:
+      parameters:
+      - description: ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses: {}
+      summary: 删除心情
+      tags:
+      - Mood
 swagger: "2.0"
 tags:
 - description: 基础模块
   name: Base
 - description: 文章模块
   name: Article
+- description: 心情模块
+  name: Mood

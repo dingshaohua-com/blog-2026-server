@@ -33,7 +33,7 @@ func handleArticleRequest(c *gin.Context, action func(*model.Article) error) {
 // @Tags         Article
 // @Param        current  query  int  false  "当前页码 (默认1)"
 // @Param        size     query  int  false  "每页条数 (默认10)"
-// @Success      200  {object}  utils.JsonResult{data=utils.PageResult[model.ArticleVO]}
+// @Success      200  {object}  utils.JsonResult{data=model.PageResult[model.ArticleVO]}
 // @Router       /article [get]
 func GetArticleList(c *gin.Context) {
 	currentStr := c.Query("current")

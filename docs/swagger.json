@@ -40,15 +40,42 @@
         },
         "/article": {
             "get": {
+                "description": "分页获取文章列表，包含分类名称和是否有更多",
                 "tags": [
                     "Article"
                 ],
                 "summary": "获取文章列表",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "当前页码 (默认1)",
+                        "name": "current",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "每页条数 (默认10)",
+                        "name": "size",
+                        "in": "query"
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/utils.JsonResult"
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/utils.JsonResult"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/model.PageResult-model_ArticleVO"
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     }
                 }
@@ -209,6 +236,109 @@
                     }
                 }
             }
+        },
+        "/mood": {
+            "get": {
+                "tags": [
+                    "Mood"
+                ],
+                "summary": "获取心情列表",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "当前页",
+                        "name": "current",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "每页条数",
+                        "name": "size",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/utils.JsonResult"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/model.PageResult-model_Mood"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Mood"
+                ],
+                "summary": "修改心情",
+                "parameters": [
+                    {
+                        "description": "心情对象",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.Mood"
+                        }
+                    }
+                ],
+                "responses": {}
+            },
+            "post": {
+                "tags": [
+                    "Mood"
+                ],
+                "summary": "添加心情",
+                "parameters": [
+                    {
+                        "description": "心情内容",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.Mood"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/utils.JsonResult"
+                        }
+                    }
+                }
+            }
+        },
+        "/mood/{id}": {
+            "delete": {
+                "tags": [
+                    "Mood"
+                ],
+                "summary": "删除心情",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {}
+            }
         }
     },
     "definitions": {
@@ -287,6 +417,76 @@
                 }
             }
         },
+        "model.Mood": {
+            "type": "object",
+            "properties": {
+                "content": {
+                    "type": "string"
+                },
+                "createTime": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "model.PageResult-model_ArticleVO": {
+            "type": "object",
+            "properties": {
+                "current": {
+                    "description": "当前页码",
+                    "type": "integer"
+                },
+                "hasMore": {
+                    "description": "是否有更多",
+                    "type": "boolean"
+                },
+                "list": {
+                    "description": "数据列表",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.ArticleVO"
+                    }
+                },
+                "size": {
+                    "description": "每页条数",
+                    "type": "integer"
+                },
+                "total": {
+                    "description": "总条数",
+                    "type": "integer"
+                }
+            }
+        },
+        "model.PageResult-model_Mood": {
+            "type": "object",
+            "properties": {
+                "current": {
+                    "description": "当前页码",
+                    "type": "integer"
+                },
+                "hasMore": {
+                    "description": "是否有更多",
+                    "type": "boolean"
+                },
+                "list": {
+                    "description": "数据列表",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.Mood"
+                    }
+                },
+                "size": {
+                    "description": "每页条数",
+                    "type": "integer"
+                },
+                "total": {
+                    "description": "总条数",
+                    "type": "integer"
+                }
+            }
+        },
         "utils.JsonResult": {
             "type": "object",
             "properties": {
@@ -312,6 +512,10 @@
         {
             "description": "文章模块",
             "name": "Article"
+        },
+        {
+            "description": "心情模块",
+            "name": "Mood"
         }
     ]
 }

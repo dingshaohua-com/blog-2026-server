@@ -27,6 +27,7 @@ func InitRouter() *gin.Engine {
 		RegisterRootRoutes(api)
 		RegisterUserRoutes(api)
 		RegisterArticleRoutes(api)
+		RegisterMoodRoutes(api)
 	}
 	return r
 }

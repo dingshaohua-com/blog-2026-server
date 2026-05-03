@@ -12,4 +12,7 @@ package utils
 
 // @Tag.name         Article
 // @Tag.description  文章模块
+
+// @Tag.name         Mood
+// @Tag.description  心情模块
 // --- 模块别名定义区域end ---
