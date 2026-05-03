@@ -7,13 +7,38 @@ import (
 
 type ArticleService struct{}
 
-func (s *ArticleService) GetList() ([]model.ArticleVO, error) {
+func (s *ArticleService) GetList(current, size int) (model.PageResult[model.ArticleVO], error) {
+	var count int64
 	var results []model.ArticleVO
-	err := utils.DB.Table("article a"). // 1. 指定主表（起别名 a）
-						Select("a.*, t.name as type_name").            // 2. 手动挑选字段，注意别名要对应 VO 的 tag
-						Joins("left join type t on a.type_id = t.id"). // 3. 手动写 Join 关联
-						Scan(&results).Error                           // 4. 将结果“扫描”进 VO 数组
-	return results, err
+
+	// 1. 统计总数
+	if err := utils.DB.Model(&model.Article{}).Count(&count).Error; err != nil {
+		return model.PageResult[model.ArticleVO]{}, err
+	}
+
+	// 2. 只有有数据时才查询详情
+	if count > 0 {
+		err := utils.DB.Table("article a").
+			Select("a.*, t.name as type_name").
+			Joins("left join type t on a.type_id = t.id").
+			Order("a.create_time desc").
+			Offset((current - 1) * size).
+			Limit(size).
+			Scan(&results).Error
+
+		if err != nil {
+			return model.PageResult[model.ArticleVO]{}, err
+		}
+	}
+
+	// 3. 组装返回结果
+	return model.PageResult[model.ArticleVO]{
+		List:    results,
+		Total:   count,
+		Current: current,
+		Size:    size,
+		HasMore: int64(current*size) < count,
+	}, nil
 }
 
 func (s *ArticleService) GetOne(id int) (model.ArticleVO, error) {

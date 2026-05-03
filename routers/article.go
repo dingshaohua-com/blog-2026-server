@@ -29,11 +29,19 @@ func handleArticleRequest(c *gin.Context, action func(*model.Article) error) {
 
 // GetArticleList 获取文章列表
 // @Summary      获取文章列表
+// @Description  分页获取文章列表，包含分类名称和是否有更多
 // @Tags         Article
-// @Success      200  {object}  utils.JsonResult
+// @Param        current  query  int  false  "当前页码 (默认1)"
+// @Param        size     query  int  false  "每页条数 (默认10)"
+// @Success      200  {object}  utils.JsonResult{data=utils.PageResult[model.ArticleVO]}
 // @Router       /article [get]
 func GetArticleList(c *gin.Context) {
-	res, err := articleService.GetList()
+	currentStr := c.Query("current")
+	sizeStr := c.Query("size")
+	current, _ := strconv.Atoi(currentStr)
+	size, _ := strconv.Atoi(sizeStr)
+
+	res, err := articleService.GetList(current, size)
 	if err != nil {
 		utils.ResultFail(c, err.Error())
 		return
