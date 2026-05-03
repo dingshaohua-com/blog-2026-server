@@ -1,3 +1,4 @@
+basePath: /api
 definitions:
   datatypes.JSONType-model_AppContent:
     type: object
@@ -59,8 +60,12 @@ definitions:
         description: 错误描述或提示信息
         type: string
     type: object
+host: localhost:8080
 info:
   contact: {}
+  description: 基于 Go + GORM 的博客系统后端
+  title: 我的博客 API
+  version: "0.1"
 paths:
   /app-info:
     get:
@@ -180,3 +185,8 @@ paths:
       tags:
       - Article
 swagger: "2.0"
+tags:
+- description: 基础模块
+  name: Base
+- description: 文章模块
+  name: Article

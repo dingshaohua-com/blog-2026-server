@@ -12,10 +12,6 @@ type Article struct {
 	Content     string    `gorm:"column:content" json:"content"`
 }
 
-func (Article) TableName() string {
-	return "article"
-}
-
 // ArticleVO 展示模型 (VO)，直接在下面定义，不用谢重复字段，用匿名嵌套
 type ArticleVO struct {
 	Article         // 组合 Article 的所有字段
