@@ -15,4 +15,7 @@ package utils
 
 // @Tag.name         Mood
 // @Tag.description  心情模块
+
+// @Tag.name         Type
+// @Tag.description  博客类型模块
 // --- 模块别名定义区域end ---

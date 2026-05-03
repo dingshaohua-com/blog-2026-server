@@ -98,6 +98,35 @@ definitions:
         description: 总条数
         type: integer
     type: object
+  model.PageResult-model_Type:
+    properties:
+      current:
+        description: 当前页码
+        type: integer
+      hasMore:
+        description: 是否有更多
+        type: boolean
+      list:
+        description: 数据列表
+        items:
+          $ref: '#/definitions/model.Type'
+        type: array
+      size:
+        description: 每页条数
+        type: integer
+      total:
+        description: 总条数
+        type: integer
+    type: object
+  model.Type:
+    properties:
+      description:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+    type: object
   utils.JsonResult:
     properties:
       code:
@@ -312,6 +341,132 @@ paths:
       summary: 删除心情
       tags:
       - Mood
+  /type:
+    delete:
+      parameters:
+      - description: 分类ID
+        in: query
+        name: id
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/utils.JsonResult'
+            - properties:
+                data:
+                  type: integer
+              type: object
+      summary: 删除分类
+      tags:
+      - Type
+    get:
+      description: 分页获取文章分类
+      parameters:
+      - description: 当前页码 (默认1)
+        in: query
+        name: current
+        type: integer
+      - description: 每页条数 (默认10)
+        in: query
+        name: size
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/utils.JsonResult'
+            - properties:
+                data:
+                  $ref: '#/definitions/model.PageResult-model_Type'
+              type: object
+      summary: 获取分类列表
+      tags:
+      - Type
+    post:
+      parameters:
+      - description: 分类对象
+        in: body
+        name: type
+        required: true
+        schema:
+          $ref: '#/definitions/model.Type'
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/utils.JsonResult'
+            - properties:
+                data:
+                  $ref: '#/definitions/model.Type'
+              type: object
+      summary: 新增分类
+      tags:
+      - Type
+    put:
+      parameters:
+      - description: 分类对象
+        in: body
+        name: type
+        required: true
+        schema:
+          $ref: '#/definitions/model.Type'
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/utils.JsonResult'
+            - properties:
+                data:
+                  $ref: '#/definitions/model.Type'
+              type: object
+      summary: 修改分类
+      tags:
+      - Type
+  /type/{id}:
+    get:
+      parameters:
+      - description: 分类ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/utils.JsonResult'
+            - properties:
+                data:
+                  $ref: '#/definitions/model.Type'
+              type: object
+      summary: 获取分类详情
+      tags:
+      - Type
+  /type/all:
+    get:
+      description: 通常用于前端下拉框
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/utils.JsonResult'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/model.Type'
+                  type: array
+              type: object
+      summary: 获取全部分类
+      tags:
+      - Type
 swagger: "2.0"
 tags:
 - description: 基础模块
@@ -320,3 +475,5 @@ tags:
   name: Article
 - description: 心情模块
   name: Mood
+- description: 博客类型模块
+  name: Type
