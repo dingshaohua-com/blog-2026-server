@@ -1,0 +1,89 @@
+name: Build & Deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+env:
+  DEPLOY_DIR: /home/apps/blog-2026-server
+  APP_NAME: blog-server
+  APP_PORT: 8080
+  REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
+  REMOTE_PORT: ${{ secrets.REMOTE_PORT || 22 }}
+  SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # ---------- 后端构建 ----------
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: true
+
+      - name: Install swag CLI
+        run: go install github.com/swaggo/swag/v2/cmd/swag@latest
+
+      - name: Generate Swagger docs
+        run: swag init -g utils/docs-meta.go -d ./ --pd
+
+      - name: Build Linux binary
+        env:
+          CGO_ENABLED: 0
+          GOOS: linux
+          GOARCH: amd64
+        run: go build -trimpath -ldflags "-s -w" -o ${{ env.APP_NAME }} .
+
+      # ---------- 打包产物 ----------
+      - name: Prepare artifact
+        run: |
+          rm -rf release
+          mkdir -p release
+          cp ${{ env.APP_NAME }} release/
+          cp -r docs release/
+          tar -czf release.tar.gz -C release .
+
+      # ---------- 上传到服务器 ----------
+      - name: Upload artifact to server
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ env.REMOTE_HOST }}
+          port: ${{ env.REMOTE_PORT }}
+          username: root
+          key: ${{ env.SSH_PRIVATE_KEY }}
+          source: release.tar.gz
+          target: /tmp
+
+      # ---------- 部署 & 重启 ----------
+      - name: Deploy and restart
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ env.REMOTE_HOST }}
+          port: ${{ env.REMOTE_PORT }}
+          username: root
+          key: ${{ env.SSH_PRIVATE_KEY }}
+          envs: DEPLOY_DIR,APP_NAME,APP_PORT
+          script: |
+            set -e
+            mkdir -p "$DEPLOY_DIR"
+            tar -xzf /tmp/release.tar.gz -C "$DEPLOY_DIR"
+            rm -f /tmp/release.tar.gz
+            cd "$DEPLOY_DIR"
+            chmod +x "$APP_NAME"
+
+            # .env 由服务器侧维护，首次部署时若不存在给个空文件，避免 godotenv.Load 报错
+            [ -f .env ] || touch .env
+
+            # 杀掉旧进程，重新启动
+            lsof -t -i:"$APP_PORT" | xargs -r kill -9 || true
+            sleep 1
+            nohup ./"$APP_NAME" > app.log 2>&1 &
+
+            sleep 2
+            echo "===== last 30 lines of app.log ====="
+            tail -n 30 app.log || true
