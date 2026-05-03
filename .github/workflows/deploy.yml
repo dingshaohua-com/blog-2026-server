@@ -46,7 +46,10 @@ jobs:
           mkdir -p release
           cp ${{ env.APP_NAME }} release/
           cp -r docs release/
+          cp .env release/
           tar -czf release.tar.gz -C release .
+          echo "===== artifact contents ====="
+          tar -tzf release.tar.gz
 
       # ---------- 上传到服务器 ----------
       - name: Upload artifact to server
@@ -76,8 +79,12 @@ jobs:
             cd "$DEPLOY_DIR"
             chmod +x "$APP_NAME"
 
-            # .env 由服务器侧维护，首次部署时若不存在给个空文件，避免 godotenv.Load 报错
-            [ -f .env ] || touch .env
+            # .env 随 tar 一起部署，校验一下非空，否则直接失败
+            if [ ! -s .env ]; then
+              echo "ERROR: .env missing or empty after extract"
+              ls -la
+              exit 1
+            fi
 
             # 杀掉旧进程，重新启动
             lsof -t -i:"$APP_PORT" | xargs -r kill -9 || true
