@@ -15,7 +15,7 @@ var moodService = &service.MoodService{}
 // @Summary      添加心情
 // @Tags         Mood
 // @Param        data  body      model.Mood  true  "心情内容"
-// @Success      200   {object}  utils.JsonResult
+// @Success      200   {object}  utils.JsonResult{data=model.Mood} "返回新增的心情"
 // @Router       /mood [post]
 func CreateMood(c *gin.Context) {
 	var mood model.Mood
@@ -23,17 +23,18 @@ func CreateMood(c *gin.Context) {
 		utils.ResultFail(c, "参数解析失败")
 		return
 	}
-	if err := moodService.Create(mood); err != nil {
+	if err := moodService.Create(&mood); err != nil {
 		utils.ResultFail(c, "添加失败")
 		return
 	}
-	utils.ResultOk(c, "添加成功")
+	utils.ResultOk(c, mood)
 }
 
 // DeleteMood 删除心情
 // @Summary      删除心情
 // @Tags         Mood
 // @Param        id   path      int  true  "ID"
+// @Success      200  {object}  utils.JsonResult{data=int} "返回被删除的心情 ID"
 // @Router       /mood/{id} [delete]
 func DeleteMood(c *gin.Context) {
 	id, _ := strconv.Atoi(c.Param("id"))
@@ -41,13 +42,14 @@ func DeleteMood(c *gin.Context) {
 		utils.ResultFail(c, "删除失败")
 		return
 	}
-	utils.ResultOk(c, "删除成功")
+	utils.ResultOk(c, id)
 }
 
 // UpdateMood 修改心情
 // @Summary      修改心情
 // @Tags         Mood
 // @Param        data  body      model.Mood  true  "心情对象"
+// @Success      200   {object}  utils.JsonResult{data=model.Mood} "返回更新后的心情"
 // @Router       /mood [put]
 func UpdateMood(c *gin.Context) {
 	var mood model.Mood
@@ -59,7 +61,7 @@ func UpdateMood(c *gin.Context) {
 		utils.ResultFail(c, "更新失败")
 		return
 	}
-	utils.ResultOk(c, "更新成功")
+	utils.ResultOk(c, mood)
 }
 
 // GetMoodList 获取列表

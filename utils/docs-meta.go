@@ -18,4 +18,7 @@ package utils
 
 // @Tag.name         Type
 // @Tag.description  博客类型模块
+
+// @Tag.name         Comment
+// @Tag.description  评论模块
 // --- 模块别名定义区域end ---

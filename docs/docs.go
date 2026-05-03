@@ -244,6 +244,203 @@ const docTemplate = `{
                 }
             }
         },
+        "/comment": {
+            "get": {
+                "description": "按文章 ID 分页获取根评论，子评论会通过 children 字段一起返回",
+                "tags": [
+                    "Comment"
+                ],
+                "summary": "获取评论列表",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "文章ID",
+                        "name": "articleId",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "当前页码 (默认1)",
+                        "name": "current",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "每页条数 (默认10)",
+                        "name": "size",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/utils.JsonResult"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/model.PageResult-model_Comment"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Comment"
+                ],
+                "summary": "更新评论",
+                "parameters": [
+                    {
+                        "description": "评论对象",
+                        "name": "comment",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.Comment"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/utils.JsonResult"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/model.Comment"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "根评论不传 replyCmId；回复某条评论时传上对应的 replyCmId",
+                "tags": [
+                    "Comment"
+                ],
+                "summary": "新增评论",
+                "parameters": [
+                    {
+                        "description": "评论对象",
+                        "name": "comment",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.Comment"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/utils.JsonResult"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/model.Comment"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Comment"
+                ],
+                "summary": "删除评论",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "评论ID",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/utils.JsonResult"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "integer"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/comment/{id}": {
+            "get": {
+                "tags": [
+                    "Comment"
+                ],
+                "summary": "获取评论详情",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "评论ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/utils.JsonResult"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/model.Comment"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
         "/mood": {
             "get": {
                 "tags": [
@@ -301,7 +498,26 @@ const docTemplate = `{
                         }
                     }
                 ],
-                "responses": {}
+                "responses": {
+                    "200": {
+                        "description": "返回更新后的心情",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/utils.JsonResult"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/model.Mood"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
             },
             "post": {
                 "tags": [
@@ -321,9 +537,21 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "OK",
+                        "description": "返回新增的心情",
                         "schema": {
-                            "$ref": "#/definitions/utils.JsonResult"
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/utils.JsonResult"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/model.Mood"
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     }
                 }
@@ -344,7 +572,26 @@ const docTemplate = `{
                         "required": true
                     }
                 ],
-                "responses": {}
+                "responses": {
+                    "200": {
+                        "description": "返回被删除的心情 ID",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/utils.JsonResult"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "integer"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
             }
         },
         "/type": {
@@ -645,6 +892,46 @@ const docTemplate = `{
                 }
             }
         },
+        "model.Comment": {
+            "type": "object",
+            "properties": {
+                "avatar": {
+                    "type": "string"
+                },
+                "blogUrl": {
+                    "type": "string"
+                },
+                "children": {
+                    "description": "子评论树：Java 端用 Map 动态塞进 children，这里直接显式声明\nGORM 在使用 Preload(\"Children\") 时会自动按 reply_cm_id 关联回填",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.Comment"
+                    }
+                },
+                "content": {
+                    "type": "string"
+                },
+                "createTime": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "nickName": {
+                    "type": "string"
+                },
+                "replyArticleId": {
+                    "type": "integer"
+                },
+                "replyCmId": {
+                    "description": "父级评论 ID，使用指针以表达 NULL（即根评论）",
+                    "type": "integer"
+                }
+            }
+        },
         "model.Mood": {
             "type": "object",
             "properties": {
@@ -675,6 +962,34 @@ const docTemplate = `{
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/model.ArticleVO"
+                    }
+                },
+                "size": {
+                    "description": "每页条数",
+                    "type": "integer"
+                },
+                "total": {
+                    "description": "总条数",
+                    "type": "integer"
+                }
+            }
+        },
+        "model.PageResult-model_Comment": {
+            "type": "object",
+            "properties": {
+                "current": {
+                    "description": "当前页码",
+                    "type": "integer"
+                },
+                "hasMore": {
+                    "description": "是否有更多",
+                    "type": "boolean"
+                },
+                "list": {
+                    "description": "数据列表",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.Comment"
                     }
                 },
                 "size": {
@@ -790,6 +1105,10 @@ const docTemplate = `{
         {
             "description": "博客类型模块",
             "name": "Type"
+        },
+        {
+            "description": "评论模块",
+            "name": "Comment"
         }
     ]
 }`

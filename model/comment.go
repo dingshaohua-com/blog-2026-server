@@ -4,25 +4,22 @@ import (
 	"time"
 )
 
-// Comment 评论实体
+// Comment 评论实体，对应 Java 中的 Comment
 type Comment struct {
-	// ID 使用 uint 更符合 Go 的习惯
-	ID             uint      `gorm:"primaryKey;autoIncrement" json:"id"`
-	Content        string    `gorm:"type:text;not null" json:"content"`
-	CreateTime     time.Time `gorm:"autoCreateTime" json:"create_time"`
-	ReplyArticleId uint      `gorm:"index" json:"reply_article_id"`
+	Id             int       `gorm:"primaryKey;autoIncrement;column:id" json:"id"`
+	Content        string    `gorm:"column:content" json:"content"`
+	CreateTime     time.Time `gorm:"column:create_time;autoCreateTime" json:"createTime"`
+	ReplyArticleId int       `gorm:"column:reply_article_id;index" json:"replyArticleId"`
 
-	// 用户相关信息
-	Avatar   string `json:"avatar"`
-	Email    string `json:"email"`
-	BlogUrl  string `json:"blog_url"`
-	NickName string `json:"nick_name"`
+	Avatar   string `gorm:"column:avatar" json:"avatar"`
+	Email    string `gorm:"column:email" json:"email"`
+	BlogUrl  string `gorm:"column:blog_url" json:"blogUrl"`
+	NickName string `gorm:"column:nick_name" json:"nickName"`
 
-	// 父级评论ID，使用指针类型 (*uint) 方便处理 NULL 值（即根评论）
-	ReplyCmId *uint `gorm:"index" json:"reply_cm_id"`
+	// 父级评论 ID，使用指针以表达 NULL（即根评论）
+	ReplyCmId *int `gorm:"column:reply_cm_id;index" json:"replyCmId"`
 
-	// --- 重点：摆到明面上的“树”结构 ---
-	// 在 Java 中你是用 Map.put("children", list) 动态塞进去的
-	// 在 Go 中我们直接定义好，GORM 预加载时会自动填充
-	Children []Comment `gorm:"foreignKey:ReplyCmId" json:"children"`
+	// 子评论树：Java 端用 Map 动态塞进 children，这里直接显式声明
+	// GORM 在使用 Preload("Children") 时会自动按 reply_cm_id 关联回填
+	Children []Comment `gorm:"foreignKey:ReplyCmId;references:Id" json:"children"`
 }

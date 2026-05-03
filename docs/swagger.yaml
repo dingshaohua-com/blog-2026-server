@@ -49,6 +49,35 @@ definitions:
         description: 扩展字段
         type: string
     type: object
+  model.Comment:
+    properties:
+      avatar:
+        type: string
+      blogUrl:
+        type: string
+      children:
+        description: |-
+          子评论树：Java 端用 Map 动态塞进 children，这里直接显式声明
+          GORM 在使用 Preload("Children") 时会自动按 reply_cm_id 关联回填
+        items:
+          $ref: '#/definitions/model.Comment'
+        type: array
+      content:
+        type: string
+      createTime:
+        type: string
+      email:
+        type: string
+      id:
+        type: integer
+      nickName:
+        type: string
+      replyArticleId:
+        type: integer
+      replyCmId:
+        description: 父级评论 ID，使用指针以表达 NULL（即根评论）
+        type: integer
+    type: object
   model.Mood:
     properties:
       content:
@@ -70,6 +99,26 @@ definitions:
         description: 数据列表
         items:
           $ref: '#/definitions/model.ArticleVO'
+        type: array
+      size:
+        description: 每页条数
+        type: integer
+      total:
+        description: 总条数
+        type: integer
+    type: object
+  model.PageResult-model_Comment:
+    properties:
+      current:
+        description: 当前页码
+        type: integer
+      hasMore:
+        description: 是否有更多
+        type: boolean
+      list:
+        description: 数据列表
+        items:
+          $ref: '#/definitions/model.Comment'
         type: array
       size:
         description: 每页条数
@@ -277,6 +326,120 @@ paths:
       summary: 获取文章详情
       tags:
       - Article
+  /comment:
+    delete:
+      parameters:
+      - description: 评论ID
+        in: query
+        name: id
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/utils.JsonResult'
+            - properties:
+                data:
+                  type: integer
+              type: object
+      summary: 删除评论
+      tags:
+      - Comment
+    get:
+      description: 按文章 ID 分页获取根评论，子评论会通过 children 字段一起返回
+      parameters:
+      - description: 文章ID
+        in: query
+        name: articleId
+        required: true
+        type: integer
+      - description: 当前页码 (默认1)
+        in: query
+        name: current
+        type: integer
+      - description: 每页条数 (默认10)
+        in: query
+        name: size
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/utils.JsonResult'
+            - properties:
+                data:
+                  $ref: '#/definitions/model.PageResult-model_Comment'
+              type: object
+      summary: 获取评论列表
+      tags:
+      - Comment
+    post:
+      description: 根评论不传 replyCmId；回复某条评论时传上对应的 replyCmId
+      parameters:
+      - description: 评论对象
+        in: body
+        name: comment
+        required: true
+        schema:
+          $ref: '#/definitions/model.Comment'
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/utils.JsonResult'
+            - properties:
+                data:
+                  $ref: '#/definitions/model.Comment'
+              type: object
+      summary: 新增评论
+      tags:
+      - Comment
+    put:
+      parameters:
+      - description: 评论对象
+        in: body
+        name: comment
+        required: true
+        schema:
+          $ref: '#/definitions/model.Comment'
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/utils.JsonResult'
+            - properties:
+                data:
+                  $ref: '#/definitions/model.Comment'
+              type: object
+      summary: 更新评论
+      tags:
+      - Comment
+  /comment/{id}:
+    get:
+      parameters:
+      - description: 评论ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/utils.JsonResult'
+            - properties:
+                data:
+                  $ref: '#/definitions/model.Comment'
+              type: object
+      summary: 获取评论详情
+      tags:
+      - Comment
   /mood:
     get:
       parameters:
@@ -311,9 +474,14 @@ paths:
           $ref: '#/definitions/model.Mood'
       responses:
         "200":
-          description: OK
+          description: 返回新增的心情
           schema:
-            $ref: '#/definitions/utils.JsonResult'
+            allOf:
+            - $ref: '#/definitions/utils.JsonResult'
+            - properties:
+                data:
+                  $ref: '#/definitions/model.Mood'
+              type: object
       summary: 添加心情
       tags:
       - Mood
@@ -325,7 +493,16 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/model.Mood'
-      responses: {}
+      responses:
+        "200":
+          description: 返回更新后的心情
+          schema:
+            allOf:
+            - $ref: '#/definitions/utils.JsonResult'
+            - properties:
+                data:
+                  $ref: '#/definitions/model.Mood'
+              type: object
       summary: 修改心情
       tags:
       - Mood
@@ -337,7 +514,16 @@ paths:
         name: id
         required: true
         type: integer
-      responses: {}
+      responses:
+        "200":
+          description: 返回被删除的心情 ID
+          schema:
+            allOf:
+            - $ref: '#/definitions/utils.JsonResult'
+            - properties:
+                data:
+                  type: integer
+              type: object
       summary: 删除心情
       tags:
       - Mood
@@ -477,3 +663,5 @@ tags:
   name: Mood
 - description: 博客类型模块
   name: Type
+- description: 评论模块
+  name: Comment

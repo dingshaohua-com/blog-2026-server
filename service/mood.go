@@ -7,9 +7,9 @@ import (
 
 type MoodService struct{}
 
-// Create 添加心情
-func (s *MoodService) Create(mood model.Mood) error {
-	return utils.DB.Create(&mood).Error
+// Create 添加心情；使用指针入参，GORM 会把数据库生成的 ID/CreateTime 回填进去
+func (s *MoodService) Create(mood *model.Mood) error {
+	return utils.DB.Create(mood).Error
 }
 
 // Delete 删除心情
